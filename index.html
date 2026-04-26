@@ -61,7 +61,6 @@ button.danger { background: var(--danger); }
 .stats { display: flex; gap: 12px; }
 
 .stat {
-  flex: 1;
   background: var(--blue-soft);
   border-radius: 18px;
   padding: 14px;
@@ -107,21 +106,19 @@ button.danger { background: var(--danger); }
 }
 
 .chart {
-  display: flex;
-  align-items: end;
+  display: grid;
   gap: 6px;
   height: 150px;
   margin-top: 18px;
   padding: 12px 4px 0;
-
-  overflow-x: auto;   /* 핵심 */
-  overflow-y: hidden;
-
   border-bottom: 2px solid var(--blue-soft);
 }
 
 .bar-wrap {
-  flex: 0 0 28px;   /* 고정폭으로 바꿔줌 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
 }
 
 .bar {
@@ -214,7 +211,7 @@ button.danger { background: var(--danger); }
 <script>
 const SET_SECONDS = 180;
 const GRID_CELLS = 30;
-const CHART_DAYS = 14;
+const CHART_DAYS = 10;
 
 let remaining = SET_SECONDS;
 let timerId = null;
@@ -310,6 +307,7 @@ function renderChart(){
   const maxSets = Math.max(...data.map(d => d.sets), 1);
 
   chartEl.innerHTML = "";
+  chartEl.style.gridTemplateColumns = `repeat(${CHART_DAYS}, 1fr)`;
 
   data.forEach(item => {
     const wrap = document.createElement("div");
