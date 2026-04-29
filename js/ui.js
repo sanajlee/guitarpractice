@@ -113,8 +113,12 @@ export function renderProfile(){
 
 export function render(){
   document.getElementById("timer").textContent = formatTime(state.remaining);
-  document.getElementById("today").textContent = state.sets;
-  document.getElementById("streak").textContent = calcStreak();
+
+  const todayEl = document.getElementById("today");
+  if (todayEl) {
+    todayEl.textContent = state.sets;
+    document.getElementById("streak").textContent = calcStreak();
+  }
 
   renderGrid();
   renderChart();
