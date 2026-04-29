@@ -1,0 +1,15 @@
+{
+  "name": "3분 연습",
+  "short_name": "3분연습",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#244f7a",
+  "background_color": "#eef6fb",
+  "icons": [
+    {
+      "src": "yrds_gpt.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
