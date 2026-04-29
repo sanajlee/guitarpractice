@@ -12,7 +12,16 @@ import {
   showSignupForm,
   startGuestMode
 } from "./auth.js";
-import { buildGrid, render, resetTimerView, openSideMenu, closeSideMenu, renderProfile, renderSideHistory } from "./ui.js";
+import {
+  buildGrid,
+  render,
+  resetTimerView,
+  openSideMenu,
+  closeSideMenu,
+  renderProfile,
+  showPracticeView,
+  showRecordView
+} from "./ui.js";
 import { buildBeats, toggleMetronome, playNote } from "./audio.js";
 
 function startTimer(){
@@ -63,6 +72,15 @@ function bindEvents(){
   document.getElementById("showSignupButton").addEventListener("click", showSignupForm);
   document.getElementById("guestButton").addEventListener("click", startGuestMode);
 
+  document.getElementById("showMyRecordButton").addEventListener("click", () => {
+    closeSideMenu();
+    showRecordView();
+  });
+
+  document.getElementById("backToPracticeButton").addEventListener("click", () => {
+    showPracticeView();
+  });
+
   document.querySelectorAll(".back-auth-button").forEach(button => {
     button.addEventListener("click", () => {
       document.getElementById("authHome").classList.remove("hidden");
@@ -101,12 +119,6 @@ function bindEvents(){
     document.getElementById("profilePanel").classList.add("hidden");
     document.getElementById("recordPanel").classList.remove("hidden");
     render();
-  });
-
-  document.getElementById("showProfileButton").addEventListener("click", () => {
-    document.getElementById("sideMain").classList.add("hidden");
-    document.getElementById("recordPanel").classList.add("hidden");
-    document.getElementById("profilePanel").classList.remove("hidden");
   });
 
   document.querySelectorAll(".back-menu-button").forEach(button => {

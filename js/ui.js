@@ -133,13 +133,21 @@ export function showApp(){
   document.getElementById("appScreen").classList.remove("hidden");
 }
 
+export function showPracticeView(){
+  document.getElementById("practiceView").classList.remove("hidden");
+  document.getElementById("recordView").classList.add("hidden");
+}
+
+export function showRecordView(){
+  document.getElementById("practiceView").classList.add("hidden");
+  document.getElementById("recordView").classList.remove("hidden");
+  render();
+}
+
+
 export function openSideMenu(){
   document.getElementById("overlay").classList.remove("hidden");
   document.getElementById("sideMenu").classList.add("open");
-
-  document.getElementById("sideMain").classList.remove("hidden");
-  document.getElementById("profilePanel").classList.add("hidden");
-  document.getElementById("recordPanel").classList.add("hidden");
 }
 
 export function closeSideMenu(){

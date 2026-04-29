@@ -249,6 +249,24 @@ select {
   z-index: 20;
 }
 
+.side-profile {
+  margin-top: 10px;
+}
+
+.side-profile input {
+  margin-top: 6px;
+}
+
+.side-menu hr {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid var(--blue-soft);
+}
+
+.side-menu-buttons button {
+  width: 100%;
+}
+
 .side-menu {
   position: fixed;
   top: 0;
