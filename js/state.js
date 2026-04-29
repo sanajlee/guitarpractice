@@ -10,5 +10,6 @@ export const state = {
   audioCtx: null,
   metroId: null,
   nextTime: 0,
-  step: 0
+  step: 0,
+  isGuest: false
 };

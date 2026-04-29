@@ -23,10 +23,29 @@
   <div id="loginScreen" class="login-screen">
     <div class="card">
       <h1>🎸 3분 연습</h1>
-      <input id="loginEmail" type="email" placeholder="email">
-      <input id="loginPassword" type="password" placeholder="password">
-      <button id="signInButton">로그인</button>
-      <button id="signUpButton" class="secondary">회원가입</button>
+
+      <div id="authHome">
+        <button id="showLoginButton">로그인</button>
+        <button id="showSignupButton" class="secondary">회원가입</button>
+        <button id="guestButton" class="secondary">게스트로 시작</button>
+      </div>
+
+      <div id="loginForm" class="hidden">
+        <h3>로그인</h3>
+        <input id="loginEmail" type="email" placeholder="email">
+        <input id="loginPassword" type="password" placeholder="password">
+        <button id="signInButton">로그인</button>
+        <button class="secondary back-auth-button">뒤로</button>
+      </div>
+
+      <div id="signupForm" class="hidden">
+        <h3>회원가입</h3>
+        <input id="signupEmail" type="email" placeholder="email">
+        <input id="signupPassword" type="password" placeholder="password">
+        <button id="signUpButton">회원가입</button>
+        <button class="secondary back-auth-button">뒤로</button>
+      </div>
+
       <p id="loginMessage" class="muted"></p>
     </div>
   </div>

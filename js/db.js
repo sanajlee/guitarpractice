@@ -18,6 +18,19 @@ export function getSetsForDate(key){
 }
 
 export async function loadAllLogs(){
+  if(state.isGuest){
+    state.allLogs = {};
+
+    Object.keys(localStorage).forEach(key => {
+      if(key.startsWith("guest-practice-")){
+        const date = key.replace("guest-practice-", "");
+        state.allLogs[date] = parseInt(localStorage.getItem(key)) || 0;
+      }
+    });
+
+    return;
+  }
+
   if(!state.currentUser) return;
 
   const { data, error } = await supabaseClient
@@ -41,6 +54,12 @@ export function loadToday(){
 }
 
 export async function saveToday(){
+  if(state.isGuest){
+    state.allLogs[dateKey()] = state.sets;
+    localStorage.setItem(`guest-practice-${dateKey()}`, state.sets);
+    return;
+  }
+
   if(!state.currentUser){
     alert("로그인해야 기록이 저장돼.");
     return;
@@ -65,6 +84,13 @@ export async function saveToday(){
 }
 
 export async function deleteToday(){
+  if(state.isGuest){
+    localStorage.removeItem(`guest-practice-${dateKey()}`);
+    delete state.allLogs[dateKey()];
+    state.sets = 0;
+    return;
+  }
+
   if(!state.currentUser) return;
 
   const { error } = await supabaseClient

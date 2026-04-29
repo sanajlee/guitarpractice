@@ -1,7 +1,17 @@
 import { SET_SECONDS } from "./config.js";
 import { state } from "./state.js";
 import { saveToday, deleteToday as deleteTodayFromDb, loadToday } from "./db.js";
-import { initAuth, signIn, signUp, signOut, saveProfile, loadProfile } from "./auth.js";
+import {
+  initAuth,
+  signIn,
+  signUp,
+  signOut,
+  saveProfile,
+  loadProfile,
+  showLoginForm,
+  showSignupForm,
+  startGuestMode
+} from "./auth.js";
 import { buildGrid, render, resetTimerView, openSideMenu, closeSideMenu, renderProfile, renderSideHistory } from "./ui.js";
 import { buildBeats, toggleMetronome, playNote } from "./audio.js";
 
@@ -48,6 +58,20 @@ async function deleteToday(){
 }
 
 function bindEvents(){
+
+  document.getElementById("showLoginButton").addEventListener("click", showLoginForm);
+  document.getElementById("showSignupButton").addEventListener("click", showSignupForm);
+  document.getElementById("guestButton").addEventListener("click", startGuestMode);
+
+  document.querySelectorAll(".back-auth-button").forEach(button => {
+    button.addEventListener("click", () => {
+      document.getElementById("authHome").classList.remove("hidden");
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("signupForm").classList.add("hidden");
+      document.getElementById("loginMessage").textContent = "";
+    });
+  });
+
   document.getElementById("signInButton").addEventListener("click", signIn);
   document.getElementById("signUpButton").addEventListener("click", signUp);
   document.getElementById("signOutButton").addEventListener("click", signOut);
