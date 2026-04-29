@@ -136,7 +136,10 @@ export function showApp(){
 export function openSideMenu(){
   document.getElementById("overlay").classList.remove("hidden");
   document.getElementById("sideMenu").classList.add("open");
-  renderSideHistory();
+
+  document.getElementById("sideMain").classList.remove("hidden");
+  document.getElementById("profilePanel").classList.add("hidden");
+  document.getElementById("recordPanel").classList.add("hidden");
 }
 
 export function closeSideMenu(){

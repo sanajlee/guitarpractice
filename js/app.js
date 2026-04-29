@@ -96,6 +96,27 @@ function bindEvents(){
     });
   });
 
+  document.getElementById("showMyRecordButton").addEventListener("click", () => {
+    document.getElementById("sideMain").classList.add("hidden");
+    document.getElementById("profilePanel").classList.add("hidden");
+    document.getElementById("recordPanel").classList.remove("hidden");
+    render();
+  });
+
+  document.getElementById("showProfileButton").addEventListener("click", () => {
+    document.getElementById("sideMain").classList.add("hidden");
+    document.getElementById("recordPanel").classList.add("hidden");
+    document.getElementById("profilePanel").classList.remove("hidden");
+  });
+
+  document.querySelectorAll(".back-menu-button").forEach(button => {
+    button.addEventListener("click", () => {
+      document.getElementById("sideMain").classList.remove("hidden");
+      document.getElementById("profilePanel").classList.add("hidden");
+      document.getElementById("recordPanel").classList.add("hidden");
+    });
+  });
+
   document.getElementById("userButton").addEventListener("click", openSideMenu);
   document.getElementById("overlay").addEventListener("click", closeSideMenu);
   document.getElementById("closeSideMenuButton").addEventListener("click", closeSideMenu);
