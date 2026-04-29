@@ -1,644 +1,127 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>3분 연습</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3분 연습</title>
 
-<!-- iOS -->
-<link rel="apple-touch-icon" href="yrds_gpt.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="3분연습">
+  <link rel="stylesheet" href="css/styles.css">
 
-<!-- Android -->
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#244f7a">
+  <link rel="apple-touch-icon" href="yrds_gpt.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="3분연습">
 
-<!-- 기본 파비콘 -->
-<link rel="icon" href="yrds_gpt.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#244f7a">
+  <link rel="icon" href="yrds_gpt.png">
 
-<style>
-:root {
-  --bg: #eef6fb;
-  --card: #ffffff;
-  --text: #1f2d3a;
-  --muted: #667887;
-  --blue-deep: #244f7a;
-  --blue-main: #3f7fb5;
-  --blue-soft: #d8eaf6;
-  --orange: #fc7903;
-  --danger: #c95f50;
-  --cell-empty: #d8eaf6;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  margin: 0;
-  padding: 24px;
-  background: var(--bg);
-  color: var(--text);
-  text-align: center;
-}
-
-.app { max-width: 420px; margin: 0 auto; }
-
-.card {
-  background: var(--card);
-  border-radius: 24px;
-  padding: 24px;
-  margin: 18px 0;
-  box-shadow: 0 8px 24px rgba(36,79,122,0.14);
-}
-
-#timer {
-  font-size: 72px;
-  font-weight: 800;
-  color: var(--blue-deep);
-}
-
-button {
-  border: none;
-  border-radius: 999px;
-  padding: 14px 22px;
-  margin: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  background: var(--blue-main);
-  color: white;
-}
-
-button.secondary { background: var(--blue-soft); color: var(--blue-deep); }
-button.danger { background: var(--danger); }
-
-.stats { display: flex; gap: 12px; }
-
-.stat {
-  flex: 1;
-  text-align: center;
-  background: var(--blue-soft);
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.stat-number {
-  font-size: 30px;
-  font-weight: 800;
-  color: var(--blue-deep);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-}
-
-.cell {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  background: var(--cell-empty);
-}
-
-.cell.filled { background: var(--orange); }
-
-.tool-carousel {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-}
-
-.tool-card {
-  min-width: 100%;
-  box-sizing: border-box;
-  scroll-snap-align: center;
-  background: var(--card);
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 8px 24px rgba(36,79,122,0.14);
-}
-
-.tool-hint {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: -6px;
-}
-
-input[type="range"], select {
-  width: 100%;
-  margin: 10px 0;
-}
-
-.beats {
-  display: grid;
-  gap: 5px;
-  margin-top: 14px;
-}
-
-.beat {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--cell-empty);
-  opacity: 0.4;
-}
-
-.beat.active {
-  transform: scale(1.2);
-  opacity: 1;
-  outline: 2px solid var(--blue-deep);
-}
-
-.tuner-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.tuner-button {
-  margin: 0;
-  padding: 16px 10px;
-}
-
-.chart {
-  display: grid;
-  gap: 6px;
-  height: 150px;
-  margin-top: 18px;
-  padding: 12px 4px 0;
-  border-bottom: 2px solid var(--blue-soft);
-}
-
-.bar-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
-}
-
-.bar {
-  width: 100%;
-  max-width: 18px;
-  min-height: 4px;
-  border-radius: 999px 999px 0 0;
-  background: var(--blue-main);
-}
-
-.bar.today { background: var(--orange); }
-
-.bar-label {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 6px;
-}
-
-.bar-count {
-  font-size: 11px;
-  color: var(--blue-deep);
-  margin-bottom: 4px;
-  font-weight: 700;
-}
-
-.muted { color: var(--muted); }
-</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-<div class="app">
-
-<h1>🎸 3분 연습</h1>
-
-<div class="card">
-  <div id="timer">03:00</div>
-  <button onclick="startTimer()">Start</button>
-  <button class="secondary" onclick="pauseTimer()">Pause</button>
-  <button class="secondary" onclick="resetTimer()">Reset</button>
-</div>
-
-<div class="tool-carousel">
-  <div class="tool-card">
-    <h3>메트로놈</h3>
-    <p class="tool-hint">옆으로 넘기면 튜너</p>
-
-    BPM: <span id="bpmValue">80</span>
-    <input type="range" id="bpm" min="40" max="220" value="80"/>
-
-    <select id="subdivision">
-      <option value="1">4분음표</option>
-      <option value="2">8분음표</option>
-      <option value="4">16분음표</option>
-    </select>
-
-    <button onclick="toggleMetronome()" id="metroButton">Metronome</button>
-
-    <div class="beats" id="beats"></div>
-  </div>
-
-  <div class="tool-card">
-    <h3>튜닝 기준음</h3>
-    <p class="tool-hint">낮은 줄 → 높은 줄</p>
-
-    <div class="tuner-grid">
-      <button class="tuner-button" onclick="playNote(82.41)">6번 미<br>E2</button>
-      <button class="tuner-button" onclick="playNote(110.00)">5번 라<br>A2</button>
-      <button class="tuner-button" onclick="playNote(146.83)">4번 레<br>D3</button>
-      <button class="tuner-button" onclick="playNote(196.00)">3번 솔<br>G3</button>
-      <button class="tuner-button" onclick="playNote(246.94)">2번 시<br>B3</button>
-      <button class="tuner-button" onclick="playNote(329.63)">1번 미<br>E4</button>
+  <div id="loginScreen" class="login-screen">
+    <div class="card">
+      <h1>🎸 3분 연습</h1>
+      <input id="loginEmail" type="email" placeholder="email">
+      <input id="loginPassword" type="password" placeholder="password">
+      <button id="signInButton">로그인</button>
+      <button id="signUpButton" class="secondary">회원가입</button>
+      <p id="loginMessage" class="muted"></p>
     </div>
   </div>
-</div>
 
-<div class="card stats">
-  <div class="stat">
-    <div class="stat-number" id="today">0</div>
-    오늘
+  <div id="appScreen" class="app hidden">
+    <button id="userButton" class="user-button">
+      <img id="topAvatar" class="top-avatar" src="yrds_gpt.png" alt="">
+      <span id="topNickname">me</span>
+    </button>
+
+    <h1>🎸 3분 연습</h1>
+
+    <div class="card">
+      <div id="timer">03:00</div>
+      <button id="startButton">Start</button>
+      <button id="pauseButton" class="secondary">Pause</button>
+      <button id="resetButton" class="secondary">Reset</button>
+    </div>
+
+    <div class="tool-carousel">
+      <div class="tool-card">
+        <h3>메트로놈</h3>
+        <p class="tool-hint">옆으로 넘기면 튜너</p>
+
+        BPM: <span id="bpmValue">80</span>
+        <input type="range" id="bpm" min="40" max="220" value="80"/>
+
+        <select id="subdivision">
+          <option value="1">4분음표</option>
+          <option value="2">8분음표</option>
+          <option value="4">16분음표</option>
+        </select>
+
+        <button id="metroButton">Metronome</button>
+        <div class="beats" id="beats"></div>
+      </div>
+
+      <div class="tool-card">
+        <h3>튜닝 기준음</h3>
+        <p class="tool-hint">낮은 줄 → 높은 줄</p>
+
+        <div class="tuner-grid">
+          <button class="tuner-button" data-note="82.41">6번 미<br>E2</button>
+          <button class="tuner-button" data-note="110.00">5번 라<br>A2</button>
+          <button class="tuner-button" data-note="146.83">4번 레<br>D3</button>
+          <button class="tuner-button" data-note="196.00">3번 솔<br>G3</button>
+          <button class="tuner-button" data-note="246.94">2번 시<br>B3</button>
+          <button class="tuner-button" data-note="329.63">1번 미<br>E4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card stats">
+      <div class="stat">
+        <div class="stat-number" id="today">0</div>
+        오늘
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="streak">0</div>
+        streak
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>오늘 채운 칸</h3>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="card">
+      <h3>최근 10일 그래프</h3>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div class="card">
+      <button id="deleteTodayButton" class="danger">오늘 기록 삭제</button>
+    </div>
   </div>
-  <div class="stat">
-    <div class="stat-number" id="streak">0</div>
-    streak
-  </div>
-</div>
 
-<div class="card">
-  <h3>오늘 채운 칸</h3>
-  <div class="grid" id="grid"></div>
-</div>
+  <div id="overlay" class="overlay hidden"></div>
 
-<div class="card">
-  <h3>최근 10일 그래프</h3>
-  <div class="chart" id="chart"></div>
-</div>
+  <aside id="sideMenu" class="side-menu">
+    <button id="closeSideMenuButton" class="secondary">닫기</button>
 
-<div class="card">
-  <button class="danger" onclick="deleteToday()">오늘 기록 삭제</button>
-</div>
+    <h3>프로필</h3>
+    <img id="profilePreview" class="profile-preview" src="yrds_gpt.png" alt="">
+    <input id="nicknameInput" type="text" placeholder="nickname">
+    <input id="avatarInput" type="file" accept="image/*">
+    <button id="saveProfileButton">프로필 저장</button>
 
-</div>
+    <h3>연습 기록</h3>
+    <div id="sideHistory" class="history"></div>
 
-<script>
-const SET_SECONDS = 180;
-const GRID_CELLS = 30;
-const CHART_DAYS = 10;
+    <button id="signOutButton" class="danger">로그아웃</button>
+  </aside>
 
-let remaining = SET_SECONDS;
-let timerId = null;
-let sets = 0;
-
-const timerEl = document.getElementById("timer");
-const todayEl = document.getElementById("today");
-const streakEl = document.getElementById("streak");
-const gridEl = document.getElementById("grid");
-const chartEl = document.getElementById("chart");
-
-function formatTime(s){
-  return `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
-}
-
-function dateKey(date = new Date()){
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function storageKey(key){
-  return `practice-${key}`;
-}
-
-function getSetsForDate(key){
-  return parseInt(localStorage.getItem(storageKey(key))) || 0;
-}
-
-function save(){
-  localStorage.setItem(storageKey(dateKey()), sets);
-}
-
-function load(){
-  sets = getSetsForDate(dateKey());
-}
-
-function calcStreak(){
-  let s = 0;
-  const d = new Date();
-
-  while(true){
-    const k = dateKey(d);
-    if(getSetsForDate(k) > 0){
-      s++;
-      d.setDate(d.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-
-  return s;
-}
-
-function getRecentData(days = CHART_DAYS){
-  const data = [];
-
-  for(let i = days - 1; i >= 0; i--){
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-
-    const key = dateKey(d);
-    data.push({
-      key,
-      label: `${d.getMonth() + 1}/${d.getDate()}`,
-      sets: getSetsForDate(key),
-      isToday: i === 0
-    });
-  }
-
-  return data;
-}
-
-function buildGrid(){
-  gridEl.innerHTML = "";
-
-  for(let i = 0; i < GRID_CELLS; i++){
-    const c = document.createElement("div");
-    c.className = "cell";
-    gridEl.appendChild(c);
-  }
-}
-
-function renderGrid(){
-  document.querySelectorAll(".cell").forEach((c,i)=>{
-    c.classList.toggle("filled", i < sets);
-  });
-}
-
-function renderChart(){
-  const data = getRecentData();
-  const maxSets = Math.max(...data.map(d => d.sets), 1);
-
-  chartEl.innerHTML = "";
-  chartEl.style.gridTemplateColumns = `repeat(${CHART_DAYS}, 1fr)`;
-
-  data.forEach(item => {
-    const wrap = document.createElement("div");
-    wrap.className = "bar-wrap";
-
-    const count = document.createElement("div");
-    count.className = "bar-count";
-    count.textContent = item.sets > 0 ? item.sets : "";
-
-    const bar = document.createElement("div");
-    bar.className = item.isToday ? "bar today" : "bar";
-    bar.style.height = `${Math.max((item.sets / maxSets) * 100, item.sets > 0 ? 8 : 3)}%`;
-
-    const label = document.createElement("div");
-    label.className = "bar-label";
-    label.textContent = item.label;
-
-    wrap.appendChild(count);
-    wrap.appendChild(bar);
-    wrap.appendChild(label);
-    chartEl.appendChild(wrap);
-  });
-}
-
-function render(){
-  timerEl.textContent = formatTime(remaining);
-  todayEl.textContent = sets;
-  streakEl.textContent = calcStreak();
-
-  renderGrid();
-  renderChart();
-}
-
-function startTimer(){
-  if(timerId) return;
-
-  timerId = setInterval(()=>{
-    remaining--;
-
-    if(remaining <= 0){
-      sets++;
-      save();
-
-      remaining = 0;
-      pauseTimer();
-      render();
-      return;
-    }
-
-    render();
-  },1000);
-}
-
-function pauseTimer(){
-  clearInterval(timerId);
-  timerId = null;
-}
-
-function resetTimer(){
-  pauseTimer();
-  remaining = SET_SECONDS;
-  render();
-}
-
-function deleteToday(){
-  const ok = confirm("오늘 기록을 삭제할까?");
-  if(!ok) return;
-
-  localStorage.removeItem(storageKey(dateKey()));
-  sets = 0;
-  resetTimer();
-}
-
-buildGrid();
-load();
-render();
-
-
-// ===== 오디오 공용 =====
-
-let audioCtx = null;
-
-function getAudioContext(){
-  if(!audioCtx){
-    audioCtx = new AudioContext();
-  }
-
-  if(audioCtx.state === "suspended"){
-    audioCtx.resume();
-  }
-
-  return audioCtx;
-}
-
-
-// ===== 메트로놈 =====
-
-let nextTime = 0;
-let metroId = null;
-let step = 0;
-
-const bpmEl = document.getElementById("bpm");
-const bpmValue = document.getElementById("bpmValue");
-const subdivisionEl = document.getElementById("subdivision");
-const beatsEl = document.getElementById("beats");
-const metroButton = document.getElementById("metroButton");
-
-bpmEl.oninput = () => bpmValue.textContent = bpmEl.value;
-
-function buildBeats(){
-  beatsEl.innerHTML = "";
-
-  const sub = parseInt(subdivisionEl.value);
-  const total = 4 * sub;
-
-  beatsEl.style.gridTemplateColumns = `repeat(${total},1fr)`;
-
-  for(let i = 0; i < total; i++){
-    const b = document.createElement("div");
-    b.className = "beat";
-    beatsEl.appendChild(b);
-  }
-}
-
-function playClick(time,isAccent,isMain){
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  const g = ctx.createGain();
-
-  osc.frequency.value = isAccent ? 1400 : isMain ? 900 : 600;
-  g.gain.value = isAccent ? 0.35 : isMain ? 0.25 : 0.12;
-
-  osc.connect(g);
-  g.connect(ctx.destination);
-
-  osc.start(time);
-  osc.stop(time + 0.05);
-}
-
-function flash(stepIndex){
-  const beats = document.querySelectorAll(".beat");
-  const sub = parseInt(subdivisionEl.value);
-
-  const accentColor = "#fc7903";
-  const subColor = "#3f7fb5";
-
-  beats.forEach((b, i) => {
-    const isQuarterBeat = i % sub === 0;
-
-    b.style.background = isQuarterBeat ? accentColor : subColor;
-    b.style.opacity = 0.4;
-    b.classList.remove("active");
-  });
-
-  if(beats[stepIndex]){
-    beats[stepIndex].classList.add("active");
-    beats[stepIndex].style.opacity = 1;
-  }
-}
-
-function scheduler(){
-  const ctx = getAudioContext();
-  const bpm = parseInt(bpmEl.value);
-  const sub = parseInt(subdivisionEl.value);
-  const interval = 60 / bpm / sub;
-  const total = 4 * sub;
-
-  while(nextTime < ctx.currentTime + 0.1){
-    const pos = step % total;
-    const isAccent = pos === 0;
-    const isMain = pos % sub === 0;
-
-    playClick(nextTime, isAccent, isMain);
-
-    setTimeout(() => flash(pos), (nextTime - ctx.currentTime) * 1000);
-
-    nextTime += interval;
-    step++;
-  }
-}
-
-function toggleMetronome(){
-  const ctx = getAudioContext();
-
-  if(metroId){
-    clearInterval(metroId);
-    metroId = null;
-    metroButton.textContent = "Metronome";
-    return;
-  }
-
-  nextTime = ctx.currentTime;
-  step = 0;
-  metroId = setInterval(scheduler, 25);
-  metroButton.textContent = "Stop";
-}
-
-subdivisionEl.onchange = buildBeats;
-buildBeats();
-
-
-// ===== 튜너 =====
-
-function playNote(freq){
-  const ctx = getAudioContext();
-  const now = ctx.currentTime;
-
-  const output = ctx.createGain();
-  output.gain.setValueAtTime(0.0001, now);
-  output.gain.exponentialRampToValueAtTime(0.7, now + 0.01);
-  output.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
-  output.connect(ctx.destination);
-
-  // 기본음 + 배음들: 기타줄 느낌
-  const harmonics = [
-    { ratio: 1, gain: 0.55 },
-    { ratio: 2, gain: 0.25 },
-    { ratio: 3, gain: 0.12 },
-    { ratio: 4, gain: 0.07 },
-    { ratio: 5, gain: 0.04 }
-  ];
-
-  harmonics.forEach(h => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "triangle";
-    osc.frequency.value = freq * h.ratio;
-
-    gain.gain.setValueAtTime(h.gain, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
-
-    osc.connect(gain);
-    gain.connect(output);
-
-    osc.start(now);
-    osc.stop(now + 3.0);
-  });
-
-  // 아주 짧은 pick attack
-  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
-  const data = noiseBuffer.getChannelData(0);
-
-  for(let i = 0; i < data.length; i++){
-    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
-  }
-
-  const noise = ctx.createBufferSource();
-  noise.buffer = noiseBuffer;
-
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(0.08, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-
-  noise.connect(noiseGain);
-  noiseGain.connect(output);
-
-  noise.start(now);
-  noise.stop(now + 0.05);
-}
-
-</script>
-
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
