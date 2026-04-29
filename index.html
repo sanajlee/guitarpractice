@@ -576,23 +576,62 @@ buildBeats();
 
 function playNote(freq){
   const ctx = getAudioContext();
+  const now = ctx.currentTime;
 
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  const output = ctx.createGain();
+  output.gain.setValueAtTime(0.0001, now);
+  output.gain.exponentialRampToValueAtTime(0.7, now + 0.01);
+  output.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+  output.connect(ctx.destination);
 
-  osc.type = "sine";
-  osc.frequency.value = freq;
+  // 기본음 + 배음들: 기타줄 느낌
+  const harmonics = [
+    { ratio: 1, gain: 0.55 },
+    { ratio: 2, gain: 0.25 },
+    { ratio: 3, gain: 0.12 },
+    { ratio: 4, gain: 0.07 },
+    { ratio: 5, gain: 0.04 }
+  ];
 
-  gain.gain.setValueAtTime(0.001, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + 0.05);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0);
+  harmonics.forEach(h => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-  osc.connect(gain);
-  gain.connect(ctx.destination);
+    osc.type = "triangle";
+    osc.frequency.value = freq * h.ratio;
 
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 2.1);
+    gain.gain.setValueAtTime(h.gain, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+
+    osc.connect(gain);
+    gain.connect(output);
+
+    osc.start(now);
+    osc.stop(now + 3.0);
+  });
+
+  // 아주 짧은 pick attack
+  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+
+  for(let i = 0; i < data.length; i++){
+    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  }
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.08, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+  noise.connect(noiseGain);
+  noiseGain.connect(output);
+
+  noise.start(now);
+  noise.stop(now + 0.05);
 }
+
 </script>
 
 </body>
