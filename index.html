@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>3분 연습</title>
 
+
 <link rel="apple-touch-icon" href="yrds_gpt.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="3분연습">
+
 
 <style>
 :root {
@@ -66,11 +68,11 @@ button.danger { background: var(--danger); }
 .stats { display: flex; gap: 12px; }
 
 .stat {
+  flex: 1;
+  text-align: center;
   background: var(--blue-soft);
   border-radius: 18px;
   padding: 14px;
-  flex: 1;
-  text-align: center;
 }
 
 .stat-number {
@@ -93,6 +95,36 @@ button.danger { background: var(--danger); }
 
 .cell.filled { background: var(--orange); }
 
+.tool-carousel {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.tool-card {
+  min-width: 100%;
+  box-sizing: border-box;
+  scroll-snap-align: center;
+  background: var(--card);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(36,79,122,0.14);
+}
+
+.tool-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: -6px;
+}
+
+input[type="range"], select {
+  width: 100%;
+  margin: 10px 0;
+}
+
 .beats {
   display: grid;
   gap: 5px;
@@ -110,6 +142,17 @@ button.danger { background: var(--danger); }
   transform: scale(1.2);
   opacity: 1;
   outline: 2px solid var(--blue-deep);
+}
+
+.tuner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.tuner-button {
+  margin: 0;
+  padding: 16px 10px;
 }
 
 .chart {
@@ -136,9 +179,7 @@ button.danger { background: var(--danger); }
   background: var(--blue-main);
 }
 
-.bar.today {
-  background: var(--orange);
-}
+.bar.today { background: var(--orange); }
 
 .bar-label {
   font-size: 10px;
@@ -152,7 +193,6 @@ button.danger { background: var(--danger); }
   margin-bottom: 4px;
   font-weight: 700;
 }
-
 
 .muted { color: var(--muted); }
 </style>
@@ -170,21 +210,38 @@ button.danger { background: var(--danger); }
   <button class="secondary" onclick="resetTimer()">Reset</button>
 </div>
 
-<div class="card">
-  <h3>메트로놈</h3>
+<div class="tool-carousel">
+  <div class="tool-card">
+    <h3>메트로놈</h3>
+    <p class="tool-hint">옆으로 넘기면 튜너</p>
 
-  BPM: <span id="bpmValue">80</span>
-  <input type="range" id="bpm" min="40" max="220" value="80"/>
+    BPM: <span id="bpmValue">80</span>
+    <input type="range" id="bpm" min="40" max="220" value="80"/>
 
-  <select id="subdivision">
-    <option value="1">4분음표</option>
-    <option value="2">8분음표</option>
-    <option value="4">16분음표</option>
-  </select>
+    <select id="subdivision">
+      <option value="1">4분음표</option>
+      <option value="2">8분음표</option>
+      <option value="4">16분음표</option>
+    </select>
 
-  <button onclick="toggleMetronome()">Metronome</button>
+    <button onclick="toggleMetronome()" id="metroButton">Metronome</button>
 
-  <div class="beats" id="beats"></div>
+    <div class="beats" id="beats"></div>
+  </div>
+
+  <div class="tool-card">
+    <h3>튜닝 기준음</h3>
+    <p class="tool-hint">낮은 줄 → 높은 줄</p>
+
+    <div class="tuner-grid">
+      <button class="tuner-button" onclick="playNote(82.41)">6번 미<br>E2</button>
+      <button class="tuner-button" onclick="playNote(110.00)">5번 라<br>A2</button>
+      <button class="tuner-button" onclick="playNote(146.83)">4번 레<br>D3</button>
+      <button class="tuner-button" onclick="playNote(196.00)">3번 솔<br>G3</button>
+      <button class="tuner-button" onclick="playNote(246.94)">2번 시<br>B3</button>
+      <button class="tuner-button" onclick="playNote(329.63)">1번 미<br>E4</button>
+    </div>
+  </div>
 </div>
 
 <div class="card stats">
@@ -207,7 +264,6 @@ button.danger { background: var(--danger); }
   <h3>최근 10일 그래프</h3>
   <div class="chart" id="chart"></div>
 </div>
-
 
 <div class="card">
   <button class="danger" onclick="deleteToday()">오늘 기록 삭제</button>
@@ -339,7 +395,6 @@ function renderChart(){
   });
 }
 
-
 function render(){
   timerEl.textContent = formatTime(remaining);
   todayEl.textContent = sets;
@@ -358,7 +413,11 @@ function startTimer(){
     if(remaining <= 0){
       sets++;
       save();
-      remaining = SET_SECONDS;
+
+      remaining = 0;
+      pauseTimer();
+      render();
+      return;
     }
 
     render();
@@ -390,9 +449,25 @@ load();
 render();
 
 
-// ===== 메트로놈 =====
+// ===== 오디오 공용 =====
 
 let audioCtx = null;
+
+function getAudioContext(){
+  if(!audioCtx){
+    audioCtx = new AudioContext();
+  }
+
+  if(audioCtx.state === "suspended"){
+    audioCtx.resume();
+  }
+
+  return audioCtx;
+}
+
+
+// ===== 메트로놈 =====
+
 let nextTime = 0;
 let metroId = null;
 let step = 0;
@@ -401,6 +476,7 @@ const bpmEl = document.getElementById("bpm");
 const bpmValue = document.getElementById("bpmValue");
 const subdivisionEl = document.getElementById("subdivision");
 const beatsEl = document.getElementById("beats");
+const metroButton = document.getElementById("metroButton");
 
 bpmEl.oninput = () => bpmValue.textContent = bpmEl.value;
 
@@ -419,15 +495,16 @@ function buildBeats(){
   }
 }
 
-function play(time,isAccent,isMain){
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
+function playClick(time,isAccent,isMain){
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
 
   osc.frequency.value = isAccent ? 1400 : isMain ? 900 : 600;
   g.gain.value = isAccent ? 0.35 : isMain ? 0.25 : 0.12;
 
   osc.connect(g);
-  g.connect(audioCtx.destination);
+  g.connect(ctx.destination);
 
   osc.start(time);
   osc.stop(time + 0.05);
@@ -437,7 +514,7 @@ function flash(stepIndex){
   const beats = document.querySelectorAll(".beat");
   const sub = parseInt(subdivisionEl.value);
 
-  const accentColor = "#d98b45";
+  const accentColor = "#fc7903";
   const subColor = "#3f7fb5";
 
   beats.forEach((b, i) => {
@@ -455,19 +532,20 @@ function flash(stepIndex){
 }
 
 function scheduler(){
+  const ctx = getAudioContext();
   const bpm = parseInt(bpmEl.value);
   const sub = parseInt(subdivisionEl.value);
   const interval = 60 / bpm / sub;
   const total = 4 * sub;
 
-  while(nextTime < audioCtx.currentTime + 0.1){
+  while(nextTime < ctx.currentTime + 0.1){
     const pos = step % total;
     const isAccent = pos === 0;
     const isMain = pos % sub === 0;
 
-    play(nextTime, isAccent, isMain);
+    playClick(nextTime, isAccent, isMain);
 
-    setTimeout(() => flash(pos), (nextTime - audioCtx.currentTime) * 1000);
+    setTimeout(() => flash(pos), (nextTime - ctx.currentTime) * 1000);
 
     nextTime += interval;
     step++;
@@ -475,22 +553,46 @@ function scheduler(){
 }
 
 function toggleMetronome(){
-  if(!audioCtx) audioCtx = new AudioContext();
+  const ctx = getAudioContext();
 
   if(metroId){
     clearInterval(metroId);
     metroId = null;
+    metroButton.textContent = "Metronome";
     return;
   }
 
-  nextTime = audioCtx.currentTime;
+  nextTime = ctx.currentTime;
   step = 0;
   metroId = setInterval(scheduler, 25);
+  metroButton.textContent = "Stop";
 }
 
 subdivisionEl.onchange = buildBeats;
-
 buildBeats();
+
+
+// ===== 튜너 =====
+
+function playNote(freq){
+  const ctx = getAudioContext();
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.value = freq;
+
+  gain.gain.setValueAtTime(0.001, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 2.1);
+}
 </script>
 
 </body>
