@@ -328,3 +328,42 @@ select {
     top: 12px;
   }
 }
+
+.side-profile-view {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.profile-text {
+  flex: 1;
+}
+
+.side-nickname {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--blue-deep);
+}
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+}
+
+.profile-edit-form {
+  margin-top: 14px;
+}
+
+.side-menu hr {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid var(--blue-soft);
+}
+
+.side-menu-buttons button {
+  width: 100%;
+}

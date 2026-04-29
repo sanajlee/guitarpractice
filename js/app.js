@@ -129,6 +129,14 @@ function bindEvents(){
     });
   });
 
+  document.getElementById("editProfileButton").addEventListener("click", () => {
+    document.getElementById("profileEditForm").classList.remove("hidden");
+  });
+
+  document.getElementById("cancelProfileEditButton").addEventListener("click", () => {
+    document.getElementById("profileEditForm").classList.add("hidden");
+  });
+
   document.getElementById("userButton").addEventListener("click", openSideMenu);
   document.getElementById("overlay").addEventListener("click", closeSideMenu);
   document.getElementById("closeSideMenuButton").addEventListener("click", closeSideMenu);
@@ -137,7 +145,9 @@ function bindEvents(){
     await saveProfile();
     await loadProfile();
     renderProfile();
+    document.getElementById("profileEditForm").classList.add("hidden");
   });
+
 }
 
 function init(){

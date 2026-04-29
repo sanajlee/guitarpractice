@@ -134,17 +134,25 @@
     <aside id="sideMenu" class="side-menu">
       <button id="closeSideMenuButton" class="secondary">닫기</button>
 
-      <!-- 👤 프로필 항상 보임 -->
-      <div class="side-profile">
+      <div class="side-profile-view">
         <img id="profilePreview" class="profile-preview" src="yrds_gpt.png" alt="">
+
+        <div class="profile-text">
+          <div id="sideNickname" class="side-nickname">me</div>
+        </div>
+
+        <button id="editProfileButton" class="icon-button">✏️</button>
+      </div>
+
+      <div id="profileEditForm" class="profile-edit-form hidden">
         <input id="nicknameInput" type="text" placeholder="nickname">
         <input id="avatarInput" type="file" accept="image/*">
-        <button id="saveProfileButton">프로필 저장</button>
+        <button id="saveProfileButton">저장</button>
+        <button id="cancelProfileEditButton" class="secondary">취소</button>
       </div>
 
       <hr>
 
-      <!-- 📌 메뉴 -->
       <div class="side-menu-buttons">
         <button id="showMyRecordButton">내 기록</button>
         <button id="signOutButton" class="danger">로그아웃</button>

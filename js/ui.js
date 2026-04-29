@@ -103,10 +103,12 @@ export function renderProfile(){
   const avatarUrl = state.profile?.avatar_url || "yrds_gpt.png";
 
   document.getElementById("topNickname").textContent = nickname;
-  document.getElementById("nicknameInput").value = nickname;
-
   document.getElementById("topAvatar").src = avatarUrl;
+
+  document.getElementById("sideNickname").textContent = nickname;
   document.getElementById("profilePreview").src = avatarUrl;
+
+  document.getElementById("nicknameInput").value = nickname;
 }
 
 export function render(){
