@@ -27,6 +27,12 @@ import { buildBeats, toggleMetronome, playNote } from "./audio.js";
 function startTimer(){
   if(state.timerId) return;
 
+  // 00:00에서 Start 눌렀을 때 바로 세트 증가하는 것 방지
+  if(state.remaining <= 0){
+    state.remaining = SET_SECONDS;
+    render();
+  }
+
   state.timerId = setInterval(async () => {
     state.remaining--;
 
@@ -34,8 +40,11 @@ function startTimer(){
       state.sets++;
       await saveToday();
 
-      state.remaining = 0;
       pauseTimer();
+
+      // 끝나면 00:00에 멈추지 않고 다시 03:00으로 표시
+      state.remaining = SET_SECONDS;
+
       render();
       renderSideHistory();
       return;
