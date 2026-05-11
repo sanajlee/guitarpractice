@@ -27,31 +27,45 @@ import { buildBeats, toggleMetronome, playNote } from "./audio.js";
 function startTimer(){
   if(state.timerId) return;
 
-  // 00:00에서 Start 눌렀을 때 바로 세트 증가하는 것 방지
+  // 00:00 상태에서 시작 누르면 초기화만
   if(state.remaining <= 0){
     state.remaining = SET_SECONDS;
     render();
   }
 
-  state.timerId = setInterval(async () => {
+  state.timerId = setInterval(() => {
+
     state.remaining--;
 
-    if(state.remaining <= 0){
-      state.sets++;
-      await saveToday();
+    // 정확히 0일 때만 처리
+    if(state.remaining === 0){
 
-      pauseTimer();
+      // 먼저 interval 완전히 종료
+      clearInterval(state.timerId);
+      state.timerId = null;
 
-      // 끝나면 00:00에 멈추지 않고 다시 03:00으로 표시
-      state.remaining = SET_SECONDS;
-
-      render();
-      renderSideHistory();
+      finishSet();
       return;
     }
 
     render();
+
   }, 1000);
+}
+
+async function finishSet(){
+
+  state.sets++;
+
+  render();
+
+  await saveToday();
+
+  // 다음 시작을 위해 03:00으로 복귀
+  state.remaining = SET_SECONDS;
+
+  render();
+  renderSideHistory();
 }
 
 function pauseTimer(){
